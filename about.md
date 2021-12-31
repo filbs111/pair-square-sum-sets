@@ -40,41 +40,42 @@ time taken: 0
 clocks per sec: 1000
 time taken: 3
 
-
+browser wasm versions built using emscripten emcc. 
 
 performance:
 ------------
 
-for 500 maximum, print 12 or more. execution times in ms
-																	console closed
-wasm 										firefox		brave		firefox		brave
-											50			16
-wasm -O1									12			9
-wasm -O2									13			10	 
-wasm -O3									12			8
-wasm -Oz									16			8			5			5
-wasm -Oz unsigned int						14			8			4			5		suspect unsigned int observed speedup maybe just measurement uncertainty. 
-																						also note removed code setting initial array values...
+for 500 maximum, print 12 or more. execution times in ms. cc=console closed
 
-no wasm (WASM=0, so should be asm.js)		40			86
-no wasm -O0									43			85
-no wasm -O1									28			39						37
-no wasm -O2									36			39			12
-no wasm -Oz									38						12			37
-no wasm -Oz	unsigned int					28			31			13			29
+|version								|firefox |brave    |firefox cc|brave cc|notes|
+|---------------------------------------|--------|---------|----------|--------|----|
+|wasm									|	50	 |	   16  ||||
+|wasm -O1								|	12	 |	    9  ||||
+|wasm -O2								|	13	 |	   10  ||||
+|wasm -O3								|	12	 |		8  ||||
+|wasm -Oz								|	16	 |		8  |	5	|	5||
+|wasm -Oz unsigned int					|	14	 |		8  |	4	|	5|suspect unsigned int observed speedup maybe just measurement uncertainty. also  removed code setting initial array values.|
+|no wasm (WASM=0, so should be asm.js)	|	40		|	86|||
+|no wasm -O0							|		43	|	85|||
+|no wasm -O1							|		28	|	39||		37||
+|no wasm -O2							|		36	|	39|			12|||
+|no wasm -Oz							|		38	|	|			12	|		37||
+|no wasm -Oz	unsigned int			|		28	|	31	|		13	|		29||
+|old javascript version					|	146		|	123		|	137		|	149||
+|backported from c javascript new version |	21		|	29		|	25		|	20||
+|backported from c + typedarray	(uint32)|	9		|	12		|	7		|	13||
 
-old javascript version						146			123			137			149
-backported from c javascript new version 	21			29			25			20
-backported from c + typedarray	(uint32)	9			12			7			13
- 
-gcc executable			5ms												$ gcc -c main.c && gcc main.o -o out.exe && ./out.exe
-gcc executable w/ -O1	3ms												$ gcc -O1 -c main.c && gcc main.o -o out-o1.exe && ./out-o1.exe
-gcc executable w/ -O2	3ms
+|version|execution time (ms)|command|
+|-------|-------------------|-------|
+|gcc executable		|	5	|	$ gcc -c main.c && gcc main.o -o out.exe && ./out.exe |
+|gcc executable w/ -O1|	3	|   $ gcc -O1 -c main.c && gcc main.o -o out-o1.exe && ./out-o1.exe|
+|gcc executable w/ -O2	|3 | $ gcc -O2 -c main.c && gcc main.o -o out-o2.exe && ./out-o2.exe|
 
  result - old javascript version very slow, not a good comparison
  new javascript version is ported from c version, and typed arrays used, for reasonable comparison
 
- - native c is fastest
+ native c is fastest. 
+
  wasm browser version is fast, but much more so when console closed! -O1 optimisation helps. above this doesn't impact run time much , but files are smaller.
  asm.js version is quite fast for firefox, but slower than optimised js version on both brave (even when js version uses regular arrays) and firefox.
  
